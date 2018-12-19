@@ -129,7 +129,8 @@ int monitor(){
   fin.close();
 
   ofstream fout("temp.dat",ios::out | ios::app);
-  ofstream fileOut2("LEDRunData.dat",ios::out | ios::app);
+  sprintf(fileNameOutput, "%sLEDRunData.dat",dir)
+  ofstream fileOut2( fileNameOutput,ios::out | ios::app);
   fileOut2 << "# Lifetime;" << " " << "Run No.;" << " " << "Unix Time;" << " " << "DAQ Rate;" << " " << "LED Rate;" << " " << "ref.PMT Rate" << " " << "Temperature;" << " " << "Humidity;";
   for(j = 0;j < 8;j++)fileOut2 << " " << "PMT" << j << " Charge;";
   fileOut2 << " "<< endl;
