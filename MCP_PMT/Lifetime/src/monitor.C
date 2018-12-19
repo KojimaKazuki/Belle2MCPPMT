@@ -10,6 +10,7 @@ int monitor(){
   char dir[64];
   char buf[64];
   char fname[128];
+  char fileNameOutput[128];
   char hname[128];
   int init_time = 0;
   float charge[8];
@@ -128,6 +129,11 @@ int monitor(){
   fin.close();
 
   ofstream fout("temp.dat",ios::out | ios::app);
+  ofstream fileOut2("LEDRunData.dat",ios::out | ios::app);
+  fileOut2 << "# Lifetime;" << " " << "Run No.;" << " " << "Unix Time;" << " " << "DAQ Rate;" << " " << "LED Rate;" << " " << "ref.PMT Rate" << " " << "Temperature;" << " " << "Humidity;";
+  for(j = 0;j < 8;j++)fileOut2 << " " << "PMT" << j << " Charge;";
+  fileOut2 << " "<< endl;
+
 
   string volume_temp = "";
   system("df | grep -A 1 'mapper' | tail -1 > .vol");
@@ -199,7 +205,10 @@ int monitor(){
       fout << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
       for(j = 0;j < 8;j++)fout << " " << charge[j];
       fout << " " << volume << endl;
-      //cout << "from root file; " << i << " " << get_time << " " << charge[5] << " " << get_led << " " << volume << "%" << endl;
+      //cout << "from root file; " << i << " " << get_time << " " << charge[5] << " " << get_led << " " << volume << "%" << endl; 
+      fileOut2 << dir << " " << Nrun << " " << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
+      for(j = 0;j < 8;j++)fileOut2 << " " << charge[j];
+      fileOut2 << " " << endl;
     }
     f->Close();
   }
