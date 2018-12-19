@@ -1,0 +1,24 @@
+data = load('Temperature180828_1.csv');
+
+[sn, sm] = size(data);
+
+x1 = data( 1:sn, 4);
+x2 = data( 1:sn, 5);
+
+torg = data( 1:sn, 2);
+t = datetime( torg, 'InputFormat', 'yyyy/MM/dd HH:mm:ss', 'TimeZone', 'JST');
+
+
+subplot(2,1,1);
+plot(t,[x1 x2]);
+legend('the side of MCP-PMT','Room Temperature');
+xlabel('Date & Time');ylabel('Temperature [degree Celsius]');
+
+[Acr, lag] = xcorr(x1,x2);
+plot(lag, Acr);
+legend('Time Correlation Function');
+xlabel('Time Lag [s]');ylabel('Temperature [degree Celsius]');
+
+[~,I] = max(abs(acor));
+lagDiff = lag(I);
+print lagDIff;
