@@ -9,7 +9,7 @@ int monitor(){
   int temp_Nrun = 0;
   char dir[64];
   char buf[64];
-  char fname[128];
+  char fileName[128];
   char fileNameOutput[128];
   char hname[128];
   int init_time = 0;
@@ -40,95 +40,95 @@ int monitor(){
     hist[i] = new TH1I(hname,hname,400,0,4000);
   }
 
-  ifstream fin;
-  fin.open("../../directory.txt");
-  fin >> dir;
-  fin.close();
+  ifstream fileIn;
+  fileIn.open("../../directory.txt");
+  fileIn >> dir;
+  fileIn.close();
 
-  fin.open("../config.txt");
-  for(i = 0;i < 325;i++)fin >> buf;
+  fileIn.open("../config.txt");
+  for(i = 0;i < 325;i++)fileIn >> buf;
   for(i = 0;i < 32;i++){
-    fin >> buf >> amp[i];
+    fileIn >> buf >> amp[i];
     //cout << amp[i] << endl;
   }
-  fin.close();
+  fileIn.close();
   //return;
-  sprintf(fname,"/home/takt/lifetime/dataset/%s/data/led/runnumber",dir);
-  fin.open(fname);
-  fin >> Nrun;
-  fin.close();
+  sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runnumber",dir);
+  fileIn.open(fileName);
+  fileIn >> Nrun;
+  fileIn.close();
 
-  sprintf(fname,"/home/takt/lifetime/dataset/%s/data/led/filenumber",dir);
-  fin.open(fname);
-  fin >> Nfile;
-  fin.close();
+  sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/filenumber",dir);
+  fileIn.open(fileName);
+  fileIn >> Nfile;
+  fileIn.close();
 
-  fin.open("runnumber");
-  fin >> temp_Nrun;
-  fin.close();
+  fileIn.open("runnumber");
+  fileIn >> temp_Nrun;
+  fileIn.close();
 
   if(temp_Nrun != Nrun){
     system("rm -f temp.dat");
     system("rm -f pedestal.dat");
   }
 
-  fin.open("pedestal.dat");
-  if(fin)for(i = 0;i < 32;i++)fin >> pedestal[i];
+  fileIn.open("pedestal.dat");
+  if(fileIn)for(i = 0;i < 32;i++)fileIn >> pedestal[i];
   else{
-    sprintf(fname,"/home/takt/lifetime/dataset/%s/data/laser/lifetime_laser%d.root",dir,Nrun);
-    TFile *f_laser = new TFile(fname);
-    TTree *tree_laser = (TTree*)f_laser->Get("mcp");
-    //tree_laser->SetBranchAddress("adc",get_adc);
-    tree_laser->SetBranchAddress("adc2",get_adc);//change by muroyama 2017 Oct from life 16
-    tree_laser->SetBranchAddress("tdc",get_tdc);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/laser/lifetime_laser%d.root",dir,Nrun);
+    TFile *fileLaser = new TFile(fileName);
+    TTree *treeLaser = (TTree*)fileLaser->Get("mcp");
+    //treeLaser->SetBranchAddress("adc",get_adc);
+    treeLaser->SetBranchAddress("adc2",get_adc);//change by muroyama 2017 Oct from life 16
+    treeLaser->SetBranchAddress("tdc",get_tdc);
     for(k = 0;k < 10000;k++){
-      tree_laser->GetEntry(k);
+      treeLaser->GetEntry(k);
       for(j = 0;j < 32;j++)if(get_tdc[j] > 4095)hist[j]->Fill(get_adc[j]);
     }
-    f_laser->Close();
-    ofstream fout("pedestal.dat");
+    fileLaser->Close();
+    ofstream fileOut("pedestal.dat");
     for(j = 0;j < 32;j++){
-      fout << hist[j]->GetMean() << endl;
+      fileOut << hist[j]->GetMean() << endl;
       pedestal[i] =  hist[j]->GetMean();
       hist[j]->Reset();
     }
   }
-  fin.close();
+  fileIn.close();
 
-  ofstream fout("runnumber");
-  fout << Nrun << endl;
-  fout.close();
+  ofstream fileOut("runnumber");
+  fileOut << Nrun << endl;
+  fileOut.close();
 
   //cout << dir << " " << Nrun << " " << Nfile << endl;
 
-  TGraph *g[15];
-  for(i = 0;i < 15;i++)g[i] = new TGraph();
+  TGraph *graph1[15];
+  for(i = 0;i < 15;i++)graph1[i] = new TGraph();
   int volume = 0;
 
   i = 0;
-  fin.open("temp.dat");
-  while(fin >> get_time >> get_daq >> get_led >> get_rPMT >> get_temp >> get_humid >> charge[0] >> charge[1] >> charge[2] >> charge[3] >> charge[4] >> charge[5] >> charge[6] >> charge[7] >> volume){
+  fileIn.open("temp.dat");
+  while(fileIn >> get_time >> get_daq >> get_led >> get_rPMT >> get_temp >> get_humid >> charge[0] >> charge[1] >> charge[2] >> charge[3] >> charge[4] >> charge[5] >> charge[6] >> charge[7] >> volume){
     if(i == 0)init_time = get_time;
     //cout << get_time << " " << init_time << endl;
     for(j = 0;j < 8;j++){
       
       if(max_charge < charge[j])max_charge = charge[j];
-      g[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
+      graph1[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
 
     }
-    g[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
-    g[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
-    g[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
-    g[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
-    g[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
-    g[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
+    graph1[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
+    graph1[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
+    graph1[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
+    graph1[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
+    graph1[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
+    graph1[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
     //cout << "from temp.dat; " << i << " "  << get_time << " " << get_led << " " << charge[0] << endl;
     i++;
   }
   N = i;
-  fin.close();
+  fileIn.close();
 
-  ofstream fout("temp.dat",ios::out | ios::app);
+  ofstream fileOut1("temp.dat",ios::out | ios::app);
   sprintf(fileNameOutput, "%sLEDRunData.dat",dir)
   ofstream fileOut2( fileNameOutput,ios::out | ios::app);
   fileOut2 << "# Lifetime;" << " " << "Run No.;" << " " << "Unix Time;" << " " << "DAQ Rate;" << " " << "LED Rate;" << " " << "ref.PMT Rate" << " " << "Temperature;" << " " << "Humidity;";
@@ -138,23 +138,23 @@ int monitor(){
 
   string volume_temp = "";
   system("df | grep -A 1 'mapper' | tail -1 > .vol");
-  ifstream fin_vol(".vol");
-  fin_vol >> buf >> buf >> buf >> volume_temp;
+  ifstream fileIn_vol(".vol");
+  fileIn_vol >> buf >> buf >> buf >> volume_temp;
   //cout << volume_temp << endl;
   volume = atof(volume_temp.substr(0,2).c_str());
   /*
   system("free | tail -1 > .mem");  
-  ifstream fin_mem(".mem");
-  fin_vol >> buf >> buf >> mem_temp;
+  ifstream fileIn_mem(".mem");
+  fileIn_vol >> buf >> buf >> mem_temp;
   memory = atof(volume_temp.substr(0,2).c_str());
   */
 
   for(i = N;i < Nfile;i++){
-    sprintf(fname,"/home/takt/lifetime/dataset/%s/data/led/lifetime_LED%d_file%d.root",dir,Nrun,i);
-    TFile *f = new TFile(fname);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/lifetime_LED%d_file%d.root",dir,Nrun,i);
+    TFile *file1 = new TFile(fileName);
     for(j = 0;j < 8;j++)hist[j]->Reset();
-    if(!f->IsZombie()){
-      TTree *tree2 = (TTree*)f->Get("config");
+    if(!file1->IsZombie()){
+      TTree *tree2 = (TTree*)file1->Get("config");
       tree2->SetBranchAddress("DAQrate",&get_daq);
       tree2->SetBranchAddress("LEDrate",&get_led);
       tree2->SetBranchAddress("rPMTrate",&get_rPMT);
@@ -165,7 +165,7 @@ int monitor(){
       get_daq = get_daq / 1000;
       get_rPMT = get_rPMT / 1000;
       
-      TTree *tree1 = (TTree*)f->Get("mcp");
+      TTree *tree1 = (TTree*)file1->Get("mcp");
       tree1->SetBranchAddress("time",&get_time);
       //tree1->SetBranchAddress("adc",get_adc);
       tree1->SetBranchAddress("adc2",get_adc);//change by muroyama 2017 Oct from life 16
@@ -195,26 +195,27 @@ int monitor(){
       
       for(j = 0;j < 8;j++){
 	if(max_charge < charge[j])max_charge = charge[j];
-	g[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
+	graph1[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
       }
-      g[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
-      g[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
-      g[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
-      g[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
-      g[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
-      g[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
-      fout << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
-      for(j = 0;j < 8;j++)fout << " " << charge[j];
-      fout << " " << volume << endl;
+      garph1[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
+      graph1[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
+      graph1[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
+      graph1[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
+      graph1[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
+      graph1[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
+      fileOut1 << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
+      for(j = 0;j < 8;j++)fileOut1 << " " << charge[j];
+      fileOut1 << " " << volume << endl;
       //cout << "from root file; " << i << " " << get_time << " " << charge[5] << " " << get_led << " " << volume << "%" << endl; 
       fileOut2 << dir << " " << Nrun << " " << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
       for(j = 0;j < 8;j++)fileOut2 << " " << charge[j];
       fileOut2 << " " << endl;
     }
-    f->Close();
+    file1->Close();
   }
 
-  fout.close();
+  fileOut1.close();
+  fileOut2.close();
 
   char title[64];
   double x, y;
@@ -227,10 +228,10 @@ int monitor(){
   //gPad->DrawFrame(0,-0.0001,(float)(get_time - init_time) / 3600 + 0.0001,max_charge * 1.1,";time (hours);current (#mu A/cm^{2})");
   TLatex *tex1[8];
   for(j = 0;j < 4;j++){
-    g[j]->SetLineColor(j + 1);
-    g[j]->SetMarkerColor(j + 1);
-    g[j]->Draw("pl");
-    g[j]->GetPoint(g[j]->GetN() - 1,x,y);
+    graph1[j]->SetLineColor(j + 1);
+    graph1[j]->SetMarkerColor(j + 1);
+    graph1[j]->Draw("pl");
+    graph1[j]->GetPoint(graph1[j]->GetN() - 1,x,y);
     sprintf(title,"PMT%d=%6.4f #mu A/cm^{2}",j + 1,y);
     tex1[j] = new TLatex(0.3,0.5 - j * 0.05,title);
     tex1[j]->SetNDC();
@@ -249,10 +250,10 @@ int monitor(){
   c1->cd(2);
   gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,max_charge * 1.1,";time (hours);current (#mu A/cm^{2})");
   for(j = 4;j < 8;j++){
-    g[j]->SetLineColor(j - 3);
-    g[j]->SetMarkerColor(j - 3);
-    g[j]->Draw("pl");
-    g[j]->GetPoint(g[j]->GetN() - 1,x,y);
+    graph1[j]->SetLineColor(j - 3);
+    graph1[j]->SetMarkerColor(j - 3);
+    graph1[j]->Draw("pl");
+    graph1[j]->GetPoint(graph1[j]->GetN() - 1,x,y);
     sprintf(title,"PMT%d=%6.4f #mu A/cm^{2}",j + 1,y);
     tex1[j] = new TLatex(0.3,0.5 - (j - 4) * 0.05,title);
     tex1[j]->SetNDC();
@@ -273,10 +274,10 @@ int monitor(){
   TLatex *ratemon[3];
   char alert_cont[64];
   for(j = 8;j < 11;j++){
-    g[j]->SetLineColor(j - 7);
-    g[j]->SetMarkerColor(j - 7);
-    g[j]->Draw("pl");
-    g[j]->GetPoint(g[j]->GetN() - 1,x,y);
+    graph1[j]->SetLineColor(j - 7);
+    graph1[j]->SetMarkerColor(j - 7);
+    graph1[j]->Draw("pl");
+    graph1[j]->GetPoint(graph1[j]->GetN() - 1,x,y);
     if(j == 8){
       sprintf(title,"DAQ rate =%9.2f kHz",y);
     }
@@ -300,10 +301,10 @@ int monitor(){
   gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,100,";time (hours);T (#circC) / Humid. (%)");
   TLatex *tempmon[2];
   for(j = 11;j < 13;j++){
-    g[j]->SetLineColor(j - 10);
-    g[j]->SetMarkerColor(j - 10);
-    g[j]->Draw("pl");
-    g[j]->GetPoint(g[j]->GetN() - 1,x,y);
+    graph1[j]->SetLineColor(j - 10);
+    graph1[j]->SetMarkerColor(j - 10);
+    graph1[j]->Draw("pl");
+    graph1[j]->GetPoint(graph1[j]->GetN() - 1,x,y);
     if(j == 11)sprintf(title,"Temp.=%4.1f#circC",y);
     alert1[j] = new TText(0.6,0.5 - (j - 11) * 0.05,"Humidity too high!");
     alert1[j]->SetNDC();
@@ -324,10 +325,10 @@ int monitor(){
   c1->cd(5);
   gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,100,";time (hours);Used local HDD space (%)");
   TLatex *HDDmon;
-  //g[12]->SetLineColor(j - 10);
-  //g[12]->SetMarkerColor(j - 10);
-  g[13]->Draw("pl");
-  g[13]->GetPoint(g[12]->GetN() - 1,x,y);
+  //graph1[12]->SetLineColor(j - 10);
+  //graph1[12]->SetMarkerColor(j - 10);
+  graph1[13]->Draw("pl");
+  graph1[13]->GetPoint(graph1[12]->GetN() - 1,x,y);
   sprintf(title,"HDD used = %2.0f%%",y);
   HDDmon = new TLatex(0.3,0.5 - (j - 11) * 0.05,title);
   HDDmon->SetNDC();

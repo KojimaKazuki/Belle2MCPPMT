@@ -35,7 +35,7 @@ while(1)
       ./SetLED -i off
       if ($? == "0") then
         RunDir = 'cat /home/takt/lifetime/daq/directory.txt'
-        cp /home/takt/lifetime/mcp/oc_monitor/*LEDRunData.dat /home/takt/lifetime/dataset/"${RunDir}"/dst/led/
+        cp -u /home/takt/lifetime/mcp/oc_monitor/${RunDir}LEDRunData.dat /home/takt/lifetime/dataset/"${RunDir}"/dst/led/
         exit
       endif
     else
