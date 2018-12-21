@@ -557,7 +557,7 @@ bool Lifetime::Monitor(char *type,int event){
 
   add = -100;
   for (int af = 4; af < 6; af++){
-    TDCch_afIn = TDCch_afIn[i];
+    TDCch_afIn = TDCch_afIn[af];
     if(TreeContent.tdc[TDCch_afIn] > TDCregion_MCP[4] + add && TreeContent.tdc[TDCch_afIn] < TDCregion_MCP[5] + add && TreeContent.tdc_af[af] < 4000) h_tdc_af[af]-> Fill(TreeContent.tdc_af[af]);
   }
 
@@ -616,7 +616,7 @@ bool Lifetime::Monitor(char *type,int event){
       PrevCount_ADC[i] = (int)h_adc[i]->GetEntries();
       PrevCount_TDC[i] = (int)h_tdc[i]->GetEntries();
     }
-    for( af = 0; af < 6; af++){
+    for(int af = 0; af < 6; af++){
       PrevCount_TDC_af[af] = (int)h_tdc_af[af]->GetEntries();
     } 
   }
@@ -660,7 +660,6 @@ void Lifetime::Calib(TTree *tree_main,TTree*tree_af){
   int j = 0;
   int Nevent = 5000;
   int evn = 0;
-  char buf[128];
   char type_calib[512];
   sprintf(type_calib,"calib");
   MakeSlotList();
