@@ -11,11 +11,12 @@ int monitor(){
   char buf[64];
   char fileName[128];
   char fileNameOutput[128];
-  char hname[128];
-  int init_time = 0;
+  char histName[128];
+  int initialTime = 0;
   float charge[8];
+  float chargeNew[8];
   float amp[32];
-  float max_charge = 0;
+  float chargeMAX = 0;
 
   unsigned short int get_adc[32];
   unsigned short int get_tdc[32];
@@ -36,8 +37,8 @@ int monitor(){
 
   TH1I *hist[32];
   for(i = 0;i < 32;i++){
-    sprintf(hname,"hist%d",i + 1);
-    hist[i] = new TH1I(hname,hname,400,0,4000);
+    sprintf(histName,"hist%d",i + 1);
+    hist[i] = new TH1I(histName,histName,400,0,4000);
   }
 
   ifstream fileIn;
@@ -108,20 +109,20 @@ int monitor(){
   i = 0;
   fileIn.open("temp.dat");
   while(fileIn >> get_time >> get_daq >> get_led >> get_rPMT >> get_temp >> get_humid >> charge[0] >> charge[1] >> charge[2] >> charge[3] >> charge[4] >> charge[5] >> charge[6] >> charge[7] >> volume){
-    if(i == 0)init_time = get_time;
-    //cout << get_time << " " << init_time << endl;
+    if(i == 0)initialTime = get_time;
+    //cout << get_time << " " << initialTime << endl;
     for(j = 0;j < 8;j++){
       
-      if(max_charge < charge[j])max_charge = charge[j];
-      graph1[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
+      if(chargeMAX < charge[j])chargeMAX = charge[j];
+      graph1[j]->SetPoint(i,(float)(get_time - initialTime) / 3600,charge[j]);
 
     }
-    graph1[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
-    graph1[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
-    graph1[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
-    graph1[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
-    graph1[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
-    graph1[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
+    graph1[8]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_daq);
+    graph1[9]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_led);
+    graph1[10]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_rPMT);
+    graph1[11]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_temp);
+    graph1[12]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_humid);
+    graph1[13]->SetPoint(i,(float)(get_time - initialTime) / 3600,volume);
     //cout << "from temp.dat; " << i << " "  << get_time << " " << get_led << " " << charge[0] << endl;
     i++;
   }
@@ -175,7 +176,7 @@ int monitor(){
 	  hist[k]->Fill(get_adc[k]);
 	}
       }
-      if(i == 0)init_time = get_time;
+      if(i == 0)initialTime = get_time;
       for(k = 0;k < 8;k++){
 	if(k<4){
 	  charge[k] = ((hist[4 * k]->GetMean() - pedestal[4 * k]) / amp[4 * k] + (hist[4 * k + 1]->GetMean() - pedestal[4 * k + 1])  / amp[4 * k + 1] + (hist[4 * k + 2]->GetMean() - pedestal[4 * k + 2]) / amp[4 * k + 2] + (hist[4 * k + 3]->GetMean() - pedestal[4 * k + 3]) / amp[4 * k + 3]);
@@ -189,26 +190,27 @@ int monitor(){
 	 
 	//cout << pedestal[k] << endl;// " " << charge[k] << " " << amp[k] << " ";
 	charge[k] = charge[k] / 4 / (0.5625 * 2.25) / 1000000 * get_led * 1000;
-	//cout << charge[k] << " " << get_led << endl;
+	chargeNew[k] = ( charge[k] / (2.3 * 2.3 * 1000000)) * get_led * 1000;
+        //cout << charge[k] << " " << get_led << endl;
       }
 
       
       for(j = 0;j < 8;j++){
-	if(max_charge < charge[j])max_charge = charge[j];
-	graph1[j]->SetPoint(i,(float)(get_time - init_time) / 3600,charge[j]);
+	if(chargeMAX < charge[j])chargeMAX = charge[j];
+	graph1[j]->SetPoint(i,(float)(get_time - initialTime) / 3600,charge[j]);
       }
-      garph1[8]->SetPoint(i,(float)(get_time - init_time) / 3600,get_daq);
-      graph1[9]->SetPoint(i,(float)(get_time - init_time) / 3600,get_led);
-      graph1[10]->SetPoint(i,(float)(get_time - init_time) / 3600,get_rPMT);
-      graph1[11]->SetPoint(i,(float)(get_time - init_time) / 3600,get_temp);
-      graph1[12]->SetPoint(i,(float)(get_time - init_time) / 3600,get_humid);
-      graph1[13]->SetPoint(i,(float)(get_time - init_time) / 3600,volume);
+      garph1[8]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_daq);
+      graph1[9]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_led);
+      graph1[10]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_rPMT);
+      graph1[11]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_temp);
+      graph1[12]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_humid);
+      graph1[13]->SetPoint(i,(float)(get_time - initialTime) / 3600,volume);
       fileOut1 << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
-      for(j = 0;j < 8;j++)fileOut1 << " " << charge[j];
+      for(j = 0;j < 8;j++) fileOut1 << " " << charge[j];
       fileOut1 << " " << volume << endl;
       //cout << "from root file; " << i << " " << get_time << " " << charge[5] << " " << get_led << " " << volume << "%" << endl; 
       fileOut2 << dir << " " << Nrun << " " << get_time << " " << get_daq << " " << get_led << " " << get_rPMT << " " << get_temp << " " << get_humid;
-      for(j = 0;j < 8;j++)fileOut2 << " " << charge[j];
+      for(j = 0;j < 8;j++) fileOut2 << " " << chargeNew[k];
       fileOut2 << " " << endl;
     }
     file1->Close();
@@ -225,7 +227,7 @@ int monitor(){
   TCanvas *c1 = new TCanvas("c1","c1",1000,800);
   c1->Divide(2,3);
   c1->cd(1);
-  //gPad->DrawFrame(0,-0.0001,(float)(get_time - init_time) / 3600 + 0.0001,max_charge * 1.1,";time (hours);current (#mu A/cm^{2})");
+  //gPad->DrawFrame(0,-0.0001,(float)(get_time - initialTime) / 3600 + 0.0001,chargeMAX * 1.1,";time (hours);current (#mu A/cm^{2})");
   TLatex *tex1[8];
   for(j = 0;j < 4;j++){
     graph1[j]->SetLineColor(j + 1);
@@ -248,7 +250,7 @@ int monitor(){
   
 
   c1->cd(2);
-  gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,max_charge * 1.1,";time (hours);current (#mu A/cm^{2})");
+  gPad->DrawFrame(0,0,(float)(get_time - initialTime) / 3600,chargeMAX * 1.1,";time (hours);current (#mu A/cm^{2})");
   for(j = 4;j < 8;j++){
     graph1[j]->SetLineColor(j - 3);
     graph1[j]->SetMarkerColor(j - 3);
@@ -270,7 +272,7 @@ int monitor(){
   gPad->SetGridy();
 
   c1->cd(3);
-  gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,get_led * 1.1,";time (hours);rate (kHz)");
+  gPad->DrawFrame(0,0,(float)(get_time - initialTime) / 3600,get_led * 1.1,";time (hours);rate (kHz)");
   TLatex *ratemon[3];
   char alert_cont[64];
   for(j = 8;j < 11;j++){
@@ -298,7 +300,7 @@ int monitor(){
   gPad->SetGridy();
   
   c1->cd(4);
-  gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,100,";time (hours);T (#circC) / Humid. (%)");
+  gPad->DrawFrame(0,0,(float)(get_time - initialTime) / 3600,100,";time (hours);T (#circC) / Humid. (%)");
   TLatex *tempmon[2];
   for(j = 11;j < 13;j++){
     graph1[j]->SetLineColor(j - 10);
@@ -323,7 +325,7 @@ int monitor(){
   c1->Update();
 
   c1->cd(5);
-  gPad->DrawFrame(0,0,(float)(get_time - init_time) / 3600,100,";time (hours);Used local HDD space (%)");
+  gPad->DrawFrame(0,0,(float)(get_time - initialTime) / 3600,100,";time (hours);Used local HDD space (%)");
   TLatex *HDDmon;
   //graph1[12]->SetLineColor(j - 10);
   //graph1[12]->SetMarkerColor(j - 10);
@@ -336,7 +338,7 @@ int monitor(){
   HDDmon->SetTextSize(0.06);
   HDDmon->Draw();
 
-  TLine *line_v = new TLine(0,80,(float)(get_time - init_time) / 3600,80);
+  TLine *line_v = new TLine(0,80,(float)(get_time - initialTime) / 3600,80);
   line_v->SetLineWidth(3);
   line_v->SetLineColor(2);
   line_v->Draw();
