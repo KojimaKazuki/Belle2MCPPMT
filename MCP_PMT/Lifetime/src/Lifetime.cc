@@ -101,9 +101,9 @@ Lifetime::Lifetime(char *config,char *type){
 
       if(strcmp(buf,"--- Amp. gain (only use for LED run) ---") == 0){
 	cout << "Read Amp. gain settings." << endl;
-	for(i = 0;i < 32;i++){
+	for ( i = 0; i < 32; i++){
 	  fileIn >> buf >> AmpGain[i];
-	  cout << "ch" << i + 1 << ": " << AmpGain[i] << endl;
+	  cout << "ch" << i+1 << ": " << AmpGain[i] << endl;
 	}
       }
 
@@ -112,8 +112,8 @@ Lifetime::Lifetime(char *config,char *type){
 	fileIn.getline(buf,256);
 	fileIn >> buf >> StartQE;
 	fileIn >> buf >> buf >> buf;
-	for(i = 0;i < 8;i++)fileIn >> initQE[i];
-	for(i = 0;i < 8;i++)fileIn >> initQE_err[i];
+	for ( i = 0; i < 8; i++) fileIn >> initQE[i];
+	for ( i = 0; i < 8; i++) fileIn >> initQE_err[i];
 	fileIn >> buf >> buf >> buf >> TDCregion_MCP[0] >> buf >> TDCregion_MCP[1];//new amp setup TDC window
 	fileIn >> buf >> buf >> buf >> TDCregion_MCP[2] >> buf >> TDCregion_MCP[3];//new amp setup TDC window for after pulse ch
 	fileIn >> buf >> buf >> buf >> TDCregion_MCP[4] >> buf >> TDCregion_MCP[5];//old setup TDC window
@@ -124,7 +124,8 @@ Lifetime::Lifetime(char *config,char *type){
 	cout << "  MCP(newaf): " << TDCregion_MCP[2] << " - " << TDCregion_MCP[3] << endl;
 	cout << "  MCP(old): " << TDCregion_MCP[4] << " - " << TDCregion_MCP[5] << endl;
 	cout << "  REF: " << TDCregion_REF[0] << " - " << TDCregion_REF[1] << endl;
-	cout << "PreCharge" << PreCharge[5] << endl;
+        cout << "PreCharge: " << endl;
+        for ( i = 0; i < 8; i++ ) cout << "  ch" << i+1 << ": " << PreChaege[i] << endl;
       }
     }
   }
