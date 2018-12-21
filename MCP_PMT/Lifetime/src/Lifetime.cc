@@ -125,7 +125,7 @@ Lifetime::Lifetime(char *config,char *type){
 	cout << "  MCP(old): " << TDCregion_MCP[4] << " - " << TDCregion_MCP[5] << endl;
 	cout << "  REF: " << TDCregion_REF[0] << " - " << TDCregion_REF[1] << endl;
         cout << "PreCharge: " << endl;
-        for ( i = 0; i < 8; i++ ) cout << "  ch" << i+1 << ": " << PreChaege[i] << endl;
+        for ( i = 0; i < 8; i++ ) cout << "  ch" << i+1 << ": " << PreCharge[i] << endl;
       }
     }
   }
