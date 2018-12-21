@@ -399,8 +399,8 @@ bool Lifetime::DAQ(TTree *tree_main,TTree*tree_af,int event){
     return false;
   }
     
-  for ( i = 0; i < SlotList.size(); i++)cam->Init(SlotList.at(i));
-  for ( i = 0; i < SlotList.size(); i++)cam->LAM(SlotList.at(i));
+  for ( i = 0; i < (int)SlotList.size(); i++)cam->Init(SlotList.at(i));
+  for ( i = 0; i < (int)SlotList.size(); i++)cam->LAM(SlotList.at(i));
   // SlotList means all TDC and ADC ch ;
   // At these two sentence, initialize and LAM camac at all TDC and ADC ch ; 
 
@@ -742,7 +742,7 @@ void Lifetime::MakeSlotList(){
   // ### TDCslot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
-    for(j = 0;j < SlotList.size();j++){
+    for(j = 0;j < (int)SlotList.size();j++){
       if(TDCslot[i] == SlotList.at(j))flag++;
     }
     //check all the elements in vector, check the double count of this list. ;  
@@ -751,7 +751,7 @@ void Lifetime::MakeSlotList(){
   // ### ADCSLot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
-    for(j = 0;j < SlotList.size();j++){
+    for(j = 0;j < (int)SlotList.size();j++){
       if(ADCslot[i] == SlotList.at(j))flag++;
     }
     if(!flag && ADCslot[i] > 0)SlotList.push_back(ADCslot[i]);
@@ -759,7 +759,7 @@ void Lifetime::MakeSlotList(){
   // ### ADC2Slot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
-    for(j = 0;j < SlotList.size();j++){
+    for(j = 0;j < (int)SlotList.size();j++){
       if(ADC2slot[i] == SlotList.at(j))flag++;
     }
     if(!flag && ADC2slot[i] > 0)SlotList.push_back(ADC2slot[i]);
@@ -767,7 +767,7 @@ void Lifetime::MakeSlotList(){
   // ### TDCafslot[i] For After-pulse Measurement ### ;
   for(i = 0;i < 6;i++){
     flag = 0;
-    for(j = 0;j < SlotList.size();j++){
+    for(j = 0;j < (int)SlotList.size();j++){
       if(TDCafslot[i] == SlotList.at(j))flag++;
     }
     if(!flag && TDCafslot[i] > 0)SlotList.push_back(TDCafslot[i]);
