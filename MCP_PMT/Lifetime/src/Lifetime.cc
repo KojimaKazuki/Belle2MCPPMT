@@ -579,7 +579,7 @@ bool Lifetime::Monitor(char *type,int event){
       if (i < 2) af_n = i + 1;
       else if ( i == 2) af_n = i + 2;
       else if ( i > 2) af_n = i + 3;
-      TDCch_afIn = TDCch_af[i]
+      TDCch_afIn = TDCch_af[i];
       if ( h_adc[TDCch_afIn]->GetEntries() == 0) printf("PMT%2d(af):%14.4s: %4d: %8d\n",af_n,"none",(int)h_tdc_af[i]->GetEntries() - PrevCount_TDC_af[i],(int)h_tdc_af[i]->GetEntries() ); // After-pulse rate = 0 ;
       else printf("PMT%2d(af):%13f%%: %4d: %8d\n",af_n,h_tdc_af[i]->GetEntries() / h_adc[TDCch_afIn]->GetEntries() * 100,(int)h_tdc_af[i]->GetEntries()-PrevCount_TDC_af[i],(int)h_tdc_af[i]->GetEntries() ); // After-pulse rate != 0 ;
     }
