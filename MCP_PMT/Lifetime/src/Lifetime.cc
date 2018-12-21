@@ -1,13 +1,12 @@
 //this program is to get informatin from config.txt
 #include "Lifetime.h"
 
-#defileIne SLOT_OREG 23
-#defileIne CH_LED 0x3
-#defileIne CH_LASER 0x18
+#define SLOT_OREG 23
+#define CH_LED 0x3
+#define CH_LASER 0x18
 
 
 Lifetime::Lifetime(char *config,char *type){
-
   char buf[256];
   char histName[128];
   string temp;
@@ -42,7 +41,7 @@ Lifetime::Lifetime(char *config,char *type){
     //get a line in config.txt in this loop
    
     temp = buf;
-    if(temp.fileInd("#") == string::npos){
+    if(temp.find("#") == string::npos){
       if(strcmp(buf,"--- PMT settings ---") == 0){
 	//when the gotten line is --- PMT settimgs ---, this program do 
 	cout << "Read PMT settings." << endl;
@@ -336,8 +335,6 @@ bool Lifetime::MainLoop(char *type,TTree *tree_main,TTree *tree_config,TTree *tr
   // Type means the kind of run ;
   // In this function, where the variable house in a branch is defileIned by type. ;
   int i = 0;
-  int j = 0;
-  int flag = 0;
   string buf;
 
   MakeSlotList();
@@ -456,9 +453,6 @@ bool Lifetime::DAQ(TTree *tree_main,TTree*tree_af,int event){
 
 
 bool Lifetime::Scaler(int waitTime){
-
-  int i = 0;
-
   if(!flag_CAMAC){
     cerr << "Error: CAMAC is not opened!" << endl;
     return false;
@@ -517,9 +511,7 @@ bool Lifetime::Monitor(char *type,int event){
     for ( i = 24; i < 32; i++){
       if(TreeContent.tdc[i] > TDCregion_MCP[4] + add && TreeContent.tdc[i] < TDCregion_MCP[5] + add) h_adc[i]-> Fill(TreeContent.adc2[i]);
     }
-  }
-  // --> For Other Runs ;
-  else {
+  }else {// --> For Other Runs ;
     add = 0;
     for ( i = 0; i < 16; i++){
       if ( i==0 || i==4 || i==10 || i==12 ){
@@ -578,15 +570,15 @@ bool Lifetime::Monitor(char *type,int event){
     // --> 32 Ch from 8 PMTs (4Ch/PMT) ; 
     for( i = 0; i < 16; i++){
       printf("Ch%2d:%6.2f%%: %4d    Ch%2d:%6.2f%%: %4d\n",i + 1,h_adc[i]->GetEntries() / event * 100,(int)h_adc[i]->GetEntries() - PrevCount_ADC[i],i + 17,h_adc[i + 16]->GetEntries() / event * 100,(int)h_adc[i + 16]->GetEntries() - PrevCount_ADC[i + 16]);
-      }
+    }
     // --> The Reference PMT ;
     printf("rPMT:%6.2f%%: %4d\n",h_adc[32]->GetEntries() / (event + 1) * 100,(int)h_adc[32]->GetEntries() - PrevCount_ADC[32]);
     // --> After-pulse Rate Monitoring ;
     printf("PMTNo:   afterpulse-rate:  diff: total-hit\n");
-    for( i = 0; i < 6; i++){
-      if(i < 2)af_n = i + 1;
-      else if ( i == 2)af_n = i + 2;
-      else if ( i > 2)af_n = i + 3;
+    for ( i = 0; i < 6; i++){
+      if (i < 2) af_n = i + 1;
+      else if ( i == 2) af_n = i + 2;
+      else if ( i > 2) af_n = i + 3;
       TDCch_afIn = TDCch_af[i]
       if ( h_adc[TDCch_afIn]->GetEntries() == 0) printf("PMT%2d(af):%14.4s: %4d: %8d\n",af_n,"none",(int)h_tdc_af[i]->GetEntries() - PrevCount_TDC_af[i],(int)h_tdc_af[i]->GetEntries() ); // After-pulse rate = 0 ;
       else printf("PMT%2d(af):%13f%%: %4d: %8d\n",af_n,h_tdc_af[i]->GetEntries() / h_adc[TDCch_afIn]->GetEntries() * 100,(int)h_tdc_af[i]->GetEntries()-PrevCount_TDC_af[i],(int)h_tdc_af[i]->GetEntries() ); // After-pulse rate != 0 ;
@@ -631,6 +623,9 @@ bool Lifetime::Monitor(char *type,int event){
   return true;
 
 }
+
+
+
 
 //void Lifetime::ReadCanvas(TCanvas *c1,TCanvas *c2,TCanvas *c3,TCanvas *c4,TCanvas *c5){
   // For an after-pulse monitor ;
