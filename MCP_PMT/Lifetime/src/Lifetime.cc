@@ -135,6 +135,7 @@ Lifetime::Lifetime(char *config,char *type){
   fileIn >> DirName;
   fileIn.close();
 
+  // TDC Parameter for an After-pulse Measurement ;
   TDCafslot[0] = 6;  
   TDCafslot[1] = 6;
   TDCafslot[2] = 6;
@@ -319,7 +320,7 @@ void Lifetime::SetBranch(TTree *tree_main,TTree *tree_config,TTree*tree_af){
   tree_config->Branch("temp",&TreeConfig.temp,"TEMP/F");
   tree_config->Branch("humid",&TreeConfig.humid,"HUMID/F");
 
-  // ### For After Pulse Measurements ### ;  
+  // ### For After-pulse Measurements ### ;  
   tree_af->Branch("tdc_af",TreeContent.tdc_af,"TDC_af[6]/s"); 
   tree_af->Branch("tdc_main",TreeContent.tdc_main,"TDC_main[6]/s"); 
   tree_af->Branch("adc_main",TreeContent.adc_main,"ADC_main[6]/s"); 
@@ -416,7 +417,7 @@ bool Lifetime::DAQ(TTree *tree_main,TTree*tree_af,int event){
   TreeContent.event = event;
   
 
-  // ### DAQ for the After Pulse Measurement ### ;
+  // ### DAQ for the After-pulse Measurement ### ;
   for ( i = 0; i < 6; i++) if(TDCafslot[i] > 0) TreeContent.tdc_af[i] = cam ->Read(TDCafslot[i],TDCafch[i]);
 
   // PMT1 Ch1 ;  
@@ -547,7 +548,7 @@ bool Lifetime::Monitor(char *type,int event){
 
 
   // ### Setting the region of a TDC monitor window for "After Pulses" ### ;
-  // TDC Ch for an After Pulse Measurement;
+  // TDC Ch for an After-pulse Measurement;
   TDCch_af[0] = 0;
   TDCch_af[1] = 4;
   TDCch_af[2] = 12;
@@ -632,7 +633,7 @@ bool Lifetime::Monitor(char *type,int event){
 }
 
 //void Lifetime::ReadCanvas(TCanvas *c1,TCanvas *c2,TCanvas *c3,TCanvas *c4,TCanvas *c5){
-  // For an after pulse monitor ;
+  // For an after-pulse monitor ;
 void Lifetime::ReadCanvas(TCanvas *c1,TCanvas *c2,TCanvas *c3,TCanvas *c4){
   c_adc1 = (TCanvas*)gROOT->FindObject(CANVAS1);
   c_adc1->Divide(4,4);
@@ -642,7 +643,7 @@ void Lifetime::ReadCanvas(TCanvas *c1,TCanvas *c2,TCanvas *c3,TCanvas *c4){
   c_tdc1->Divide(4,4);
   c_tdc2 = (TCanvas*)gROOT->FindObject(CANVAS4);
   c_tdc2->Divide(4,4);
-  //c_tdc_af = (TCanvas*)gROOT->FindObject(CANVAS5);//for afterpulse monitor ;
+  //c_tdc_af = (TCanvas*)gROOT->FindObject(CANVAS5);// For an after-pulse monitor ;
   //c_tdc_af->Divide(3,2);
   flag_Canvas = true;
     return;
@@ -743,14 +744,17 @@ void Lifetime::MakeSlotList(){
   int i = 0;
   int j = 0;
   int flag = 0;
-  
+
+  // ### TDCslot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
     for(j = 0;j < SlotList.size();j++){
       if(TDCslot[i] == SlotList.at(j))flag++;
-    }//chsck all the elements in vector, check the double count of this list.  
+    }
+    //check all the elements in vector, check the double count of this list. ;  
     if(!flag && TDCslot[i] > 0)SlotList.push_back(TDCslot[i]);
   }
+  // ### ADCSLot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
     for(j = 0;j < SlotList.size();j++){
@@ -758,6 +762,7 @@ void Lifetime::MakeSlotList(){
     }
     if(!flag && ADCslot[i] > 0)SlotList.push_back(ADCslot[i]);
   }
+  // ### ADC2Slot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
     for(j = 0;j < SlotList.size();j++){
@@ -765,6 +770,7 @@ void Lifetime::MakeSlotList(){
     }
     if(!flag && ADC2slot[i] > 0)SlotList.push_back(ADC2slot[i]);
   }
+  // ### TDCafslot[i] For After-pulse Measurement ### ;
   for(i = 0;i < 6;i++){
     flag = 0;
     for(j = 0;j < SlotList.size();j++){
