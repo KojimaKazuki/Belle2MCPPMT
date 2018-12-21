@@ -179,11 +179,11 @@ Lifetime::~Lifetime(){
   
   if(flag_Complete){
     if(strcmp(RunType,"laser") == 0 && Nrun != -1){
-      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/%s/runNumber",DirName,RunType);
+      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/%s/runnumber",DirName,RunType);
       fileOut.open(fileName);
       fileOut << Nrun + 1 << endl;
       fileOut.close();
-      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runNumber",DirName);
+      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runnumber",DirName);
       fileOut.open(fileName);
       fileOut << Nrun << endl;
       fileOut.close();
@@ -192,11 +192,11 @@ Lifetime::~Lifetime(){
       fileOut << 0 << endl;
       fileOut.close();
     }else if(strcmp(RunType,"pedestal") == 0 && Nrun != -1){
-      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runNumber",DirName);
+      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runnumber",DirName);
       fileOut.open(fileName);
       fileOut << Nrun + 1 << endl;
       fileOut.close();
-      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/pedestal/runNumber",DirName);
+      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/pedestal/runnumber",DirName);
       fileOut.open(fileName);
       fileOut << Nrun + 1 << endl;
       fileOut.close();
@@ -206,15 +206,15 @@ Lifetime::~Lifetime(){
       fileOut << Nfile + 1 << endl;
       fileOut.close();
     }else if(strcmp(RunType,"test") == 0 && Nrun != -1){
-      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/test/runNumber",DirName);
+      sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/test/runnumber",DirName);
       fileOut.open(fileName);
       fileOut << Nrun + 1 << endl;
       fileOut.close();
     }else{
-      cout << "Warning: the runNumber or the filenumber is not incremented." << endl;
+      cout << "Warning: the runnumber or the filenumber is not incremented." << endl;
     }
   }else{
-    cout << "Warning: the runNumber or the filenumber is not incremented." << endl;
+    cout << "Warning: the runnumber or the filenumber is not incremented." << endl;
   }
   cout << endl;
   cout << "***********************************************" << endl;
@@ -252,10 +252,10 @@ void Lifetime::EndCamac(){
 bool Lifetime::SetFileName(char *type,char *rootname){
   char fileName[128];
   
-  sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/%s/runNumber",DirName,type);
+  sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/%s/runnumber",DirName,type);
   ifstream fileIn(fileName);
   if(!fileIn){
-    cerr << "Error: runNumber file for " << type << " run does not exist." << endl;
+    cerr << "Error: runnumber file for " << type << " run does not exist." << endl;
     cerr << "Run number is set as -1." << endl;
     Nrun = -1;
     return false;
@@ -687,7 +687,7 @@ bool Lifetime::CheckRunNumber(char *type){
   char fileName[128];
 
   if(strcmp(type,"laser") == 0){
-    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runNumber",DirName);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runnumber",DirName);
     fileIn.open(fileName);
     fileIn >> runNum;
     fileIn.close();
@@ -699,7 +699,7 @@ bool Lifetime::CheckRunNumber(char *type){
   }
   
   if(strcmp(type,"pedestal") == 0){
-    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/laser/runNumber",DirName);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/laser/runnumber",DirName);
     fileIn.open(fileName);
     fileIn >> runNum;
     fileIn.close();
@@ -707,7 +707,7 @@ bool Lifetime::CheckRunNumber(char *type){
       cerr << "Runnumber is invalid. Please let an expert know. (comparison of pedestal with laser)" << endl;
       return false;
     }
-    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runNumber",DirName);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/led/runnumber",DirName);
     fileIn.open(fileName);
     fileIn >> runNum;
     fileIn.close();
@@ -718,7 +718,7 @@ bool Lifetime::CheckRunNumber(char *type){
   }
   
   if(strcmp(type,"led") == 0){
-    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/laser/runNumber",DirName);
+    sprintf(fileName,"/home/takt/lifetime/dataset/%s/data/laser/runnumber",DirName);
     fileIn.open(fileName);
     fileIn >> runNum;
     fileIn.close();
