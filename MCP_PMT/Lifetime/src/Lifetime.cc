@@ -405,17 +405,21 @@ bool Lifetime::DAQ(TTree *tree_main,TTree*tree_af,int event){
   // SlotList means all TDC and ADC ch ;
   // At these two sentence, initialize and LAM camac at all TDC and ADC ch ; 
 
+  // ### DAQ of 8 PMTs from TDC & ADC ### ;
   for ( i = 0; i < 32; i++) if(TDCslot[i] > 0) TreeContent.tdc[i] = cam ->Read(TDCslot[i],TDCch[i]);
-  for ( i = 0; i < 32; i++) if(TDCslot[i] > 0) TreeContent.tdc_ref = cam ->Read(TDCslot[i],TDCch[i]);
   for ( i = 0; i < 32; i++) if(ADCslot[i] > 0) TreeContent.adc[i] = cam ->Read(ADCslot[i],ADCch[i]);
   for ( i = 0; i < 32; i++) if(ADC2slot[i] > 0) TreeContent.adc2[i] = cam ->Read(ADC2slot[i],ADC2ch[i]);
-  for ( i = 0; i < 32; i++) if(ADCslot[i] > 0) TreeContent.adc_ref = cam ->Read(ADCslot[i],ADCch[i]);
-  
-  TreeContent.time = time(NULL);// -->accessing to variable time defileIned in TreeContent ;
-  TreeContent.event = event;
+  // ### DAQ of Reference PMTs from TDC & ADC ### ;
+  if(TDCslot[32] > 0) TreeContent.tdc_ref = cam ->Read(TDCslot[32],TDCch[32]);
+  if(ADCslot[32] > 0) TreeContent.adc_ref = cam ->Read(ADCslot[32],ADCch[32]);
   
 
+  TreeContent.time = time(NULL);// -->accessing to variable time defileIned in TreeContent ;
+  TreeContent.event = event;
+
+  
   // ### DAQ for the After-pulse Measurement ### ;
+  // main = Main Signal; af = After-pulse Signal ; 
   for ( i = 0; i < 6; i++) if(TDCafslot[i] > 0) TreeContent.tdc_af[i] = cam ->Read(TDCafslot[i],TDCafch[i]);
 
   // PMT1 Ch1 ;  
