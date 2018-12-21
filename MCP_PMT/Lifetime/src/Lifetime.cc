@@ -557,7 +557,7 @@ bool Lifetime::Monitor(char *type,int event){
 
   add = -100;
   for (int af = 4; af < 6; af++){
-    TDCch_afIn = TDCch_afIn[af];
+    TDCch_afIn = TDCch_af[af];
     if(TreeContent.tdc[TDCch_afIn] > TDCregion_MCP[4] + add && TreeContent.tdc[TDCch_afIn] < TDCregion_MCP[5] + add && TreeContent.tdc_af[af] < 4000) h_tdc_af[af]-> Fill(TreeContent.tdc_af[af]);
   }
 
