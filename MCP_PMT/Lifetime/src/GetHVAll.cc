@@ -34,36 +34,50 @@ int main( int argc, char *argv[] ){
   time_t startTime = time( 0 );
   char dateMonitor[64];
   strftime(dateMonitor, sizeof(dateMonitor), "%Y/%m/%d %a %H:%M:%S", localtime(&startTime));
-  const int NCh = 8;
-  int VmonArray[NCh];
-  int ImonArray[NCh];
-  for( int iCrate=0 ; iCrate<g_nCrate ; iCrate++ ){
-    int iCh=0;
+
+  int VmonArray[g_nCrate][10] = {};
+  int ImonArray[g_nCrate][10] = {};
+  for(int iCrate = 0 ; iCrate < g_nCrate ; iCrate++ ){
+    int iCh = 0;
     //for( int iCh=0 ; iCh<g_nCh[iCrate] ; iCh++ ){
     while( g_ChID[iCrate][iCh]>=0 ){
       int ChID = g_ChID[iCrate][iCh];
       int status = hv->GetStatus(g_CrateID[iCrate],ChID,false);
       int Vmon = ( status==0 ? hv->GetVmon() : -1 );
       int Imon = ( status==0 ? hv->GetImon() : -1 );
-      VmonArray[iCh] = Vmon;
-      ImonArray[iCh] = Imon;
-      std::cout << Vmon << "\t" << Imon << "\t";
+      VmonArray[iCrate][iCh] = Vmon;
+      ImonArray[iCrate][iCh] = Imon;
+      std::cout << "Crate" << iCrate << "Ch No." << iCh << "Vmon: " << Vmon << "\t" << "Imon" << Imon <<  "\n";
+      std::cout << "Crate" << iCrate << "Ch No." << iCh << "Vmon2: " << VmonArray[iCrate][iCh] << "\t" << "Imon2" << ImonArray[iCrate][iCh] <<  "\n";
       fileOut << Vmon << "\t" << Imon << "\t";
 
       iCh++;
     }
   }  
-  std::cout << "Vmon: ";
-  for ( int iCh = 0; iCh < NCh; iCh++ ){
-    std::cout << VmonArray[iCh] << "\t";
+
+  const int NCh = 4; 
+  // ### Output Monitor Values of Voltage ### ;
+  std::cout << "Vmon:" << "\t";
+  for (int kCrate = 0; kCrate < g_nCrate - 1; kCrate++ ){
+    for (int kCh = 0; kCh < NCh; kCh++ ){
+      std::cout << VmonArray[kCrate][kCh] << "\t";
+    }
   }
-  std::cout << "\n" << std::endl;
-  std::cout << "Imon: ";
-  for ( int iCh = 0; iCh < NCh; iCh++ ){
-    std::cout << ImonArray[iCh] << "\t";
+  std::cout << std::endl;
+  // ### Output Monitor Values of Current ### ;
+  std::cout << "Imon:" << "\t";
+  for (int kCrate = 0; kCrate < g_nCrate -1; kCrate++ ){
+    for (int kCh = 0; kCh < NCh; kCh++ ){
+      std::cout << ImonArray[kCrate][kCh] << "\t";
+    }
   }
-  std::cout << "\n" << std::endl;
-  std::cout << "Time: " << dateMonitor << std::endl;
+  std::cout << std::endl;
+  // ### Output the Volatge & Current of the Reference PMT ###
+  std::cout << "Vmon(ref): " << VmonArray[g_nCrate-1][0] << std::endl;
+  std::cout << "Imon(ref): " << ImonArray[g_nCrate-1][0] << std::endl;
+  // ### Output Start Time of Monitoring ### ;
+  std::cout << "The date to start monitoring: " << dateMonitor << std::endl;
+  std::cout << "The date to start monitoring: " << time << std::endl;
   fileOut << startTime << std::endl;
 
   delete hv;
