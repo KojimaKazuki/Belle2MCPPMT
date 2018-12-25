@@ -130,7 +130,7 @@ int monitor(){
   fileIn.close();
 
   ofstream fileOut1("temp.dat",ios::out | ios::app);
-  sprintf(fileNameOutput, "%sLEDRunData.dat",dir)
+  sprintf(fileNameOutput, "%sLEDRunData.dat",dir);
   ofstream fileOut2( fileNameOutput,ios::out | ios::app);
   fileOut2 << "# Lifetime;" << " " << "Run No.;" << " " << "Unix Time;" << " " << "DAQ Rate;" << " " << "LED Rate;" << " " << "ref.PMT Rate" << " " << "Temperature;" << " " << "Humidity;";
   for(j = 0;j < 8;j++)fileOut2 << " " << "PMT" << j << " Charge;";
@@ -199,7 +199,7 @@ int monitor(){
 	if(chargeMAX < charge[j])chargeMAX = charge[j];
 	graph1[j]->SetPoint(i,(float)(get_time - initialTime) / 3600,charge[j]);
       }
-      garph1[8]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_daq);
+      graph1[8]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_daq);
       graph1[9]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_led);
       graph1[10]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_rPMT);
       graph1[11]->SetPoint(i,(float)(get_time - initialTime) / 3600,get_temp);
