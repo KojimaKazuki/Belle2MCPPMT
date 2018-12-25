@@ -5,7 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
-
+#include <vector>
+#include <stdio.h>
+#include <time.h>
 #include "utility.h"
 
 const int g_nCrate = 3;
@@ -22,14 +24,18 @@ int main( int argc, char *argv[] ){
     return 1;
   }
 
-  std::ofstream output( argv[1], std::ios::app );
-  if( output.fail() ){
+  std::ofstream fileOut( argv[1], std::ios::app );
+  if( fileOut.fail() ){
     std::cout << "ERROR : fail to open output file\"" << argv[1] << "\"" << std::endl;
     return 1;
   }
   
   N470* hv = new N470();
   time_t StartTime = time( 0 );
+  char dateMonitor[64]
+  strftime(dateMonitor, sizeof(dateMonitor), "%Y/%m/%d %a %H:%M:%S", time(&t));
+  std::vector<int> VmonArray;
+  std::vector<int> ImonArray;
   for( int iCrate=0 ; iCrate<g_nCrate ; iCrate++ ){
     int iCh=0;
     //for( int iCh=0 ; iCh<g_nCh[iCrate] ; iCh++ ){
@@ -38,16 +44,22 @@ int main( int argc, char *argv[] ){
       int status = hv->GetStatus(g_CrateID[iCrate],ChID,false);
       int Vmon = ( status==0 ? hv->GetVmon() : -1 );
       int Imon = ( status==0 ? hv->GetImon() : -1 );
+      VmonArray.push_back(Vmon);
+      ImonArray.push_back(Imon);
       std::cout << Vmon << "\t" << Imon << "\t";
-      output << Vmon << "\t" << Imon << "\t";
+      fileOut << Vmon << "\t" << Imon << "\t";
 
       iCh++;
     }
-  }
-  std::cout << StartTime << std::endl;
-  output << StartTime << std::endl;
+  }  
+  std::cout << "Vmon " << VmonArray << std::endl;
+  std::cout << "Imon " << ImonArray << std::endl;
+  std::cout << "Time " << dateMonitor << std::endl;
+  fileOut << StartTime << std::endl;
 
   delete hv;
+  VmonArray.clear();
+  ImonArray.clear();
 
   return 1;
 }
