@@ -392,7 +392,7 @@ bool Lifetime::MainLoop(char *type,TTree *tree_main,TTree *tree_config,TTree *tr
 
 
 
-bool Lifetime::DAQ(TTree *tree_main,TTree*tree_af,int event){
+bool Lifetime::DAQ(TTree *tree_main,TTree *tree_af,int event){
   // If you add new TTree file, e.g TTree* tree_af, call the variables are two TTree type ; 
   int i = 0;
   if(!flag_CAMAC){
@@ -753,7 +753,7 @@ void Lifetime::MakeSlotList(){
     //check all the elements in vector, check the double count of this list. ;  
     if(!flag && TDCslot[i] > 0)SlotList.push_back(TDCslot[i]);
   }
-  // ### ADCSLot[i] ### ;
+  // ### ADCsLot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
     for(j = 0;j < (int)SlotList.size();j++){
@@ -761,7 +761,7 @@ void Lifetime::MakeSlotList(){
     }
     if(!flag && ADCslot[i] > 0)SlotList.push_back(ADCslot[i]);
   }
-  // ### ADC2Slot[i] ### ;
+  // ### ADC2slot[i] ### ;
   for(i = 0;i < 33;i++){
     flag = 0;
     for(j = 0;j < (int)SlotList.size();j++){
